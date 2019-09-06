@@ -6,7 +6,9 @@
   var i = 0;
   var lineNumber = 0;
 
+  console.log("XXXXXX", source)
   if (source && source[0]) {
+    console.log("XXXXXX", source)
     anchorHash = document.location.hash.substring(1);
     lines = source[0].getElementsByTagName('li');
     totalLines = lines.length;

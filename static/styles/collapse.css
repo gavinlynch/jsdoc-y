@@ -1,4 +1,5 @@
 @media only screen and (min-width: 681px) {
+  /*
   nav > ul > li:hover .methods,
   .active .methods {
     display: block;
@@ -24,4 +25,5 @@
   nav > ul > li.active > a {
     margin-bottom: 15px;
   }
+  */
 }

@@ -3,64 +3,61 @@
 $(document).ready(function () {
   var currentSectionNav, target;
 
-  // If an anchor hash is in the URL highlight the menu item
-  highlightActiveHash();
-  // If a specific page section is in the URL highlight the menu item
-  highlightActiveSection();
+  highlightActive();
 
+  /*
   // If a specific page section is in the URL scroll that section up to the top
   currentSectionNav = $('#' + getCurrentSectionName() + '-nav');
 
   if (currentSectionNav.position()) {
     $('nav').scrollTop(currentSectionNav.position().top);
   }
+  *//*
 
-  // function to scroll to anchor when clicking an anchor linl
+  /*
   $('a[href*="#"]:not([href="#"])').click(function () {
-    /* eslint-disable no-invalid-this */
     if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
-      target = $(this.hash);
-      target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+      //target = $(this.hash);
+      target = []
+    console.warn('[href="' + this.hash.slice(1) + '"]')
+      target = target.length ? target : $('[href="' + this.hash.slice(1) + '"]');
       if (target.length) {
         $('html, body').animate({
           scrollTop: target.offset().top
         }, 1000);
       }
     }
-    /* eslint-enable no-invalid-this */
   });
+  */
 });
 
-// If a new anchor section is selected, change the hightlighted menu item
-$(window).bind('hashchange', function (event) {
-  highlightActiveHash(event);
-});
+$(window).bind('hashchange', highlightActive)
 
-function highlightActiveHash(event) {
-  var oldUrl, oldSubSectionElement;
+function highlightActive() {
+  var sectionPath = location.pathname.split('/').reverse()[0].split('#')[0]
+  var anchor = $.find(`[href="${sectionPath}"]`)
 
-  // check for and remove old hash active state
-  if (event && event.originalEvent.oldURL) {
-    oldUrl = event.originalEvent.oldURL;
-
-    if (oldUrl.indexOf('#') > -1) {
-      oldSubSectionElement = $('#' + getCurrentSectionName() + '-' + oldUrl.substring(oldUrl.indexOf('#') + 1) + '-nav');
-
-      if (oldSubSectionElement) {
-        oldSubSectionElement.removeClass('active');
+  if (anchor.length) {
+    var $anchor = $(anchor)
+    $anchor.addClass('active')
+    var $sectionLinks = $anchor.next('ul').find('li a')
+    $sectionLinks.removeClass('active')
+    $sectionLinks.each(function (i, node) {
+      //console.log(node.href.split(/([^a-zA-Z0-9]*?).*?/i))
+      var symbol = node.href.split(/#([^a-zA-Z0-9]*)/i)
+      console.log(">", symbol[1])
+      var linkPath = '#' + symbol[1] + node.href.split('#').reverse()[0]
+      console.warn(linkPath)
+      if (linkPath === location.hash) {
+        $(node).addClass('active')
+        /*
+        $('html, body').animate({
+          scrollTop: $(node).offset().top
+        }, 1000);
+        */
       }
-    }
+    })
   }
-
-  if (getCurrentHashName()) {
-    $('#' + getCurrentSectionName() + '-' + getCurrentHashName() + '-nav').addClass('active');
-  }
-}
-
-function highlightActiveSection() {
-  var pageId = getCurrentSectionName();
-
-  $('#' + pageId + '-nav').addClass('active');
 }
 
 function getCurrentSectionName() {

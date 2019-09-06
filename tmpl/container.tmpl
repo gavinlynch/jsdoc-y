@@ -16,18 +16,39 @@
   <header>
     <?js if (!doc.longname || doc.kind !== 'module') { ?>
       <h2>
-        <?js if (doc.ancestors && doc.ancestors.length) { ?>
-          <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
-        <?js } ?>
-        <?js= doc.name ?>
-        <?js if (doc.variation) { ?>
-          <sup class="variation"><?js= doc.variation ?></sup>
-        <?js } ?>
       </h2>
 
       <?js if (doc.classdesc) { ?>
         <div class="class-description">
-          <?js= doc.classdesc ?>
+          <h2>Description:</h2>
+          <p class="desc">
+            <?js= doc.classdesc ?>
+          </p>
+
+          <?js if (doc.ancestors && doc.ancestors.length) { ?>
+            <h2>Module:</h2>
+            <p class="desc">
+              <?js if (doc.ancestors && doc.ancestors.length) { ?>
+                <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
+              <?js } ?>
+              <?js= doc.name ?>
+              <?js if (doc.variation) { ?>
+                <sup class="variation"><?js= doc.variation ?></sup>
+              <?js } ?>
+            </p>
+          <?js } ?>
+
+          <?js if (doc.variation) { ?>
+            <sup class="variation"><?js= doc.variation ?></sup>
+          <?js } ?>
+
+          <?js if (doc.augments && doc.augments.length) { ?>
+            <h2>Extends:</h2>
+            <div class="desc">
+              <?js= self.partial('augments.tmpl', doc) ?>
+            </div>
+          <?js } ?>
+
         </div>
       <?js } ?>
     <?js } else if (doc.kind === 'module' && doc.modules) { ?>
@@ -70,12 +91,6 @@
         <?js } ?>
       <?js } ?>
     </div>
-
-    <?js if (doc.augments && doc.augments.length) { ?>
-      <h3 class="subsection-title">Extends</h3>
-
-      <?js= self.partial('augments.tmpl', doc) ?>
-    <?js } ?>
 
     <?js if (doc.requires && doc.requires.length) { ?>
       <h3 class="subsection-title">Requires</h3>
