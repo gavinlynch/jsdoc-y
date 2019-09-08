@@ -85,7 +85,7 @@ h1.page-title {
 
 h2 {
   font-size: 1.9em;
-  margin: 1.5em 0 0;
+  margin: 0.5em 0 0;
 }
 
 h3 {
@@ -97,8 +97,9 @@ h3 {
 h3.reference-title {
   display: block;
   font-weight: 400;
-  margin-top: 2em;
-  text-align: center;
+  margin: 4em 1.5em 0 1.5em;
+  text-align: left;
+  text-transform: none;
 }
 
 h3.reference-title small {
@@ -130,9 +131,13 @@ h4.name {
   font-weight: 500;
   color: var(--primary-color);
   background-color: var(--section-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #80808040;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
+}
+
+h4.name:hover {
+  transition: border-color 0.2s;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 h5 {
@@ -170,14 +175,13 @@ samp {
   border-radius: 5px;
 }
 
+.raised-description,
 .class-description {
   margin-bottom: 1em;
   margin-top: 1em;
   padding: 10px 20px;
-  background-color: var(--section-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #80808040;
-  box-shadow: #80808040;
 }
 
 .class-description > h2 {
@@ -269,9 +273,6 @@ nav {
   overflow-x: visible;
   overflow-y: auto;
   height: 100%;
-  /*
-  padding: 0px 30px 100px 30px;
-  */
   height: 100%;
   position: fixed;
   transition: left 0.2s;
@@ -321,12 +322,6 @@ nav ul a:active {
   color: var(--link-color);
   text-decoration: none;
 }
-
-/*;
-nav > ul {
-  padding: 0 10px;
-}
-*/
 
 nav > ul li:first-child {
   padding-top: 0;
@@ -693,8 +688,6 @@ dl.param-type {
   border-radius: 100%;
   width: 50px;
   height: 50px;
-  -webkit-box-shadow: 0px 2px 9px 0px rgba(0, 0, 0, 0.31);
-  -moz-box-shadow: 0px 2px 9px 0px rgba(0, 0, 0, 0.31);
   box-shadow: 0px 2px 9px 0px rgba(0, 0, 0, 0.31);
 }
 
@@ -899,19 +892,24 @@ td table.props {
   position: fixed;
   top: 0px;
   left: 0px;
-  padding: 10px 10px 0 10px;
   z-index: 999;
   width: 300px;
 }
 
 .top-nav-wrapper ul {
+  display: flex;
   margin: 0;
+  padding: 0;
 }
 
 .top-nav-wrapper ul li {
-  display: inline-block;
-  padding: 0 10px;
-  vertical-align: top;
+  flex: 1;
+  display: flex;
+  padding: 0.5em 1em 0 0.5em;
+}
+
+.top-nav-wrapper ul li:first-child {
+  flex-grow: 0;
 }
 
 .top-nav-wrapper ul li.active {
@@ -919,8 +917,10 @@ td table.props {
 }
 
 .search-wrapper {
-  display: inline-block;
   position: relative;
+  display: block;
+  width: 100%;
+  margin-top: 0.5em;
 }
 
 .search-wrapper svg {
@@ -929,12 +929,13 @@ td table.props {
 }
 
 input.search-input {
+  width: 100%;
+  margin: 0;
+  padding: 7px 15px 12px 35px;
   background: transparent;
   box-shadow: 0;
   border: 0;
-  border-bottom: 1px solid #c7c7c7;
-  padding: 7px 15px 12px 35px;
-  margin: 0 auto;
+  border-bottom: 1px solid #C7C7C7;
 }
 
 /* Smooth outline with box-shadow: */
@@ -1010,10 +1011,11 @@ input.search-input:focus {
 .link-icon {
   opacity: 0;
   position: absolute;
-  margin-left: -25px;
+  margin-left: -2em;
   padding-right: 5px;
   margin-top: 0.2em;
   cursor: pointer;
+  transition: opacity 0.2s;
 }
 
 .link-icon svg {
@@ -1026,10 +1028,12 @@ input.search-input:focus {
 
 .example-container:hover .link-icon,
 .name-container:hover .link-icon {
-  opacity: .5;
+  opacity: 1;
 }
 
 .name-container {
+  position: relative;
+  top: 1em;
   display: flex;
-  padding-top: 1em;
+  margin-bottom: 3em;
 }
