@@ -2,6 +2,7 @@
 /* eslint-disable vars-on-top, valid-jsdoc */
 'use strict';
 
+var _ = require('lodash')
 var doop = require('jsdoc/util/doop');
 var fs = require('jsdoc/fs');
 var helper = require('jsdoc/util/templateHelper');
@@ -298,6 +299,8 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
         itemsNav += '<li id="' + item.name.replace('/', '_') + '-nav">' + linktoFn('', item.name);
         itemsNav += '</li>';
       } else if (!hasOwnProp.call(itemsSeen, item.longname)) {
+        // skip modules without any methods
+        if (methods.length === 0) return
         // replace '/' in url to match ID in some section
         itemsNav += '<li id="' + item.name.replace('/', '_') + '-nav">' + linktoFn(item.longname, item.name.replace(/^module:/, ''));
         if (methods.length) {
@@ -380,6 +383,110 @@ function buildNav(members) {
   }
 
   return nav;
+}
+
+/**
+ * Create the navigation sidebar.
+ * @param {object} members The members that will be used to create the sidebar.
+ * @param {array<object>} members.classes
+ * @param {array<object>} members.externals
+ * @param {array<object>} members.globals
+ * @param {array<object>} members.mixins
+ * @param {array<object>} members.modules
+ * @param {array<object>} members.namespaces
+ * @param {array<object>} members.tutorials
+ * @param {array<object>} members.events
+ * @param {array<object>} members.interfaces
+ * @return {string} The HTML for the navigation sidebar.
+ */
+function buildNavByDir(members) {
+  var seen = {}
+
+  const navItems = Object.keys(members).reduce((accum, type) => {
+    members[type].forEach((doc) => {
+      const navParts = getNavDir(doc.meta.shortpath)
+      _.set(accum, navParts.join('.'), doc)
+    })
+
+    return accum
+  }, {})
+
+  return buildMemberNavByDir(navItems, linkto, seen)
+}
+
+function getNavDir(name, depth = 0){
+  conf = env.conf.templates || {}
+  conf.default = conf.default || {}
+
+  const shortname = name.replace(/^module:/, '')
+  const extensionSplit = shortname.split('.')
+  let pathWithoutExt = shortname
+
+  if (shortname.indexOf('.') > -1) {
+    [pathWithoutExt] = extensionSplit.slice(0, extensionSplit.length - 1)
+  }
+
+  const organizedByDir = pathWithoutExt.split('/').slice(depth).map((p) => {
+    return (conf.alias && conf.alias[p]) ? conf.alias[p] : _.startCase(p)
+  })
+
+  return organizedByDir
+}
+
+function buildMemberNavByDir(items, linktoFn, itemsSeen, itemsNav = 'DEFAULT') {
+  let depth = 0
+  let first = true
+
+  const markup = Object.keys(items).map((key) => {
+    return (
+      `<h3 class="directory">${key}</h3>
+      ${_buildMemberNavByDir(items[key])}`
+    )
+  })
+
+  function _buildMemberNavByDir(item, accumPath = '', depth = 0){
+    let html = ''
+    let markup = {}
+    depth += 1
+
+    if (item && item.comment) {
+      var methods = find({kind: 'function', memberof: item.longname})
+
+      if (!hasOwnProp.call(item, 'longname')) {
+        html += `<li id="${item.name.replace('/', '_')}-nav">${linktoFn('', item.name)}</li>`
+      } else if (!hasOwnProp.call(itemsSeen, item.longname)) {
+        // replace '/' in url to match ID in some section
+        const subdir = getNavDir(item.longname, 1)
+        html += `<li id="${item.name.replace('/', '_')}-nav">${linktoFn(item.longname, subdir.join(' > '))}`
+        if (methods.length) {
+          html += '<ul class="methods">'
+
+          methods.forEach(function (method) {
+            html += `<li data-type="method" id="${item.name.replace('/', '_')}-${method.name}-nav">`
+            html += linkto(method.longname, method.name)
+            html += '</li>'
+          });
+
+          html += '</ul>'
+        }
+
+        html += '</li>'
+        itemsSeen[item.longname] = true
+      }
+
+      // TODO sorting
+      markup[accumPath] = html
+      return html
+    }
+
+    const dirs = Object.keys(item).map((dir) => {
+      return _buildMemberNavByDir(item[dir], `${accumPath} <span class="subdirectory">${dir}</span>`, depth)
+    })
+
+    return dirs.join('')
+  }
+
+  return `<ul>${markup.join('')}</ul>`
 }
 
 /**
@@ -510,6 +617,16 @@ exports.publish = function (taffyData, opts, tutorials) {
   if (sourceFilePaths.length) {
     sourceFiles = shortenPaths(sourceFiles, path.commonPrefix(sourceFilePaths));
   }
+
+  var organizedDirs = Object.keys(sourceFiles).map((key) => {
+    var extensionSplit = sourceFiles[key].shortened.split('.')
+    var [pathWithoutExt] = extensionSplit.slice(0, extensionSplit.length - 1)
+    var organizedByDir = pathWithoutExt.split('/').map((p) => {
+      return (conf.alias && conf.alias[p]) ? conf.alias[p] : _.startCase(p)
+    })
+    return organizedByDir
+  })
+
   data().each(function (doclet) {
     var docletPath;
     var url = helper.createLink(doclet);
@@ -574,7 +691,7 @@ exports.publish = function (taffyData, opts, tutorials) {
   view.outputSourceFiles = outputSourceFiles;
 
   // once for all
-  view.nav = buildNav(members);
+  view.nav = conf.organizeByDir ? buildNavByDir(members) : buildNav(members);
   attachModuleSymbols(find({longname: {left: 'module:'}}), members.modules);
 
   // generate the pretty-printed source files first so other pages can link to them

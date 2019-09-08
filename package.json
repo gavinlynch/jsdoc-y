@@ -1,7 +1,7 @@
 {
-  "name": "jsdoc-template",
+  "name": "jsdoc-yum",
   "version": "3.3.0",
-  "description": "Braintree JSDoc 3 Template",
+  "description": "Yum! Brands JSDoc 3 Template",
   "main": "publish.js",
   "scripts": {
     "lint": "eslint .",
@@ -9,9 +9,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/braintree/jsdoc-template"
+    "url": "https://github.com/gavinlynch/jsdoc-yum"
   },
-  "author": "Braintreeps <code@getbraintree.com>",
+  "author": "Gavin Brady Lynch <gavin.b.lynch@gmail.com>",
   "licenses": [
     {
       "type": "Apache-2.0",
@@ -19,12 +19,13 @@
     }
   ],
   "bugs": {
-    "url": "https://github.com/braintree/jsdoc-template"
+    "url": "https://github.com/gavinlynch/jsdoc-yum"
   },
-  "homepage": "https://github.com/braintree/jsdoc-template",
+  "homepage": "https://github.com/gavinlynch/jsdoc-yum",
   "devDependencies": {
     "eslint": "^6.2.2",
     "eslint-config-braintree": "^4.0.0",
+    "lodash": "^4.17.15",
     "taffydb": "^2.7.3"
   }
 }
