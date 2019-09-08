@@ -63,6 +63,10 @@
   </header>
 
   <article>
+    <?js if (doc.kind === 'class' && doc.classdesc) { ?>
+      <h3 class="subsection-title">Constructor</h3>
+    <?js } ?>
+
     <div class="container-overview">
       <?js if (doc.kind === 'module' && doc.modules) { ?>
         <?js if (doc.description) { ?>

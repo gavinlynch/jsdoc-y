@@ -97,8 +97,8 @@ h3 {
 h3.reference-title {
   display: block;
   font-weight: 400;
-  margin: 4em 1.5em 0 1.5em;
-  text-align: left;
+  margin: 5em 1.5em 3em 1.5em;
+  text-align: center;
   text-transform: none;
 }
 
@@ -299,6 +299,18 @@ nav h3 {
   padding: 0;
 }
 
+nav h3.directory {
+  margin: 0;
+  padding: 1em 0 0.8em 1.5em;
+  color: #FFF;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background-color: var(--primary-color)
+}
+
 nav ul {
   font-size: 100%;
   line-height: 17px;
@@ -313,7 +325,8 @@ nav ul a {
   font-size: 16px;
 }
 
-nav ul a, nav ul a:active {
+nav ul a,
+nav ul a:active {
   display: block;
 }
 
@@ -379,9 +392,23 @@ nav ul > li > a.active {
 
 nav ul ul a:active,
 nav ul ul a.active {
+  position: relative;
   font-weight: bold;
   color: #FFF;
   background-color: var(--primary-color);
+}
+
+nav a:active:before,
+nav a.active:before {
+  content: '';
+  position: absolute;
+  top: calc(50% - 0.25em);
+  left: 0.5em;
+  display: block;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background-color: #FFF;
 }
 
 nav h2 {
